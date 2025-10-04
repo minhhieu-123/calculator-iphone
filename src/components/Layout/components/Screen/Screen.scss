@@ -1,0 +1,22 @@
+.screen {
+    min-height: 120px;
+    max-height: 220px;
+    width: 100%;
+    display: grid;
+}
+.groupValue {
+    display: flex;
+    align-self: end;
+    justify-self: end;
+    flex-direction: column;
+    text-align: right;
+    .newValue {
+        font-size: 3rem;
+        color: white;
+        padding-top: 6px;
+    }
+    .oldValue {
+        font-size: 2.2rem;
+        color: var(--color-four);
+    }
+}

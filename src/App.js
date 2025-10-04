@@ -1,8 +1,22 @@
+import { Fragment } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { publicRoutes } from '~/routes';
+// import { BasicLayout } from '~/component/Layout/BasicLayout';
+
+import './App.scss';
+
 function App() {
     return (
-        <div className="App">
-            <header className="App-header"></header>
-        </div>
+        <Router>
+            <div className="App">
+                <Routes>
+                    {publicRoutes.map((route, index) => {
+                        const Page = route.component;
+                        return <Route key={index} path={route.path} element={<Page />} />;
+                    })}
+                </Routes>
+            </div>
+        </Router>
     );
 }
 
