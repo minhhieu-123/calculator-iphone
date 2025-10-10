@@ -1,15 +1,17 @@
+import { useStore } from '../../../../store';
+import { Fragment } from 'react/jsx-runtime';
+
 import './Screen.scss';
 import Grid from '@mui/material/Grid';
 import HeaderScreen from './HeaderScreen';
-import { useStore } from '../../../../store';
 function Screen() {
     const [state, dispatch] = useStore();
-    const { currInput, screenInput } = state;
+    const { currInput, screenInput, exportInput } = state;
     function handleExport(value) {
         return value.join('');
     }
     return (
-        <>
+        <Fragment>
             <Grid item size={12}>
                 <div className={'headerScreen'}>
                     <HeaderScreen />
@@ -19,7 +21,8 @@ function Screen() {
                         <span className="oldValue">0</span>
 
                         <span className="newValue">
-                            {handleExport(state.exportInput) === '' ? 0 : handleExport(state.exportInput)}
+                            {/* {handleExport(state.exportInput) === '' ? 0 : handleExport(state.exportInput)} */}
+                            {handleExport(state.screenInput) === '' ? 0 : handleExport(state.screenInput)}
                         </span>
                     </div>
                     {/* <div className="groupValue_Pre">
@@ -28,7 +31,7 @@ function Screen() {
                     </div> */}
                 </div>
             </Grid>
-        </>
+        </Fragment>
     );
 }
 

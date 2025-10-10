@@ -8,48 +8,60 @@ import { GROUPS_B_BUTTONS } from '../../../Datas';
 function GroupBasic() {
     const [state, dispatch] = useStore();
     const { currInput, screenInput } = state;
+    //Handle swap button
     const [deleteMode, setDeleteMode] = useState(false);
-    console.log('delete', deleteMode);
     useEffect(() => {
-        if ((currInput != '' && screenInput.length >= 1) || (currInput === '' && screenInput.length >= 1)) {
+        if ((currInput !== '' && screenInput.length >= 1) || (currInput === '' && screenInput.length >= 1)) {
             setDeleteMode(true);
         } else {
             setDeleteMode(false);
         }
     }, [currInput, screenInput]);
+
     return (
         <>
-            {console.log('re - render')}
             {GROUPS_B_BUTTONS &&
                 GROUPS_B_BUTTONS.map((btn) => {
-                    const dynamicProps = { [btn.className]: true }; // { primary: true }
-                    const handleDispatch = (payload) => (e) => {
+                    const dynamicProps = { [btn.className]: true };
+                    //Check condition dispatch
+                    const handleDispatch = (payload, action) => (e) => {
                         e.preventDefault();
-                        const opValue = ['+', '-', '*', '/', '.'];
-                        if (payload.value === '-' && state.currInput === '*') dispatch(actions.setScreen(payload));
-                        else if (opValue.includes(payload.value) && opValue.includes(state.currInput)) return;
-                        else {
-                            dispatch(actions.setScreen(payload));
+                        switch (action) {
+                            case 'deleteAction':
+                                dispatch(actions.deleteAction(payload));
+                                break;
+                            case 'setScreen':
+                                dispatch(actions.setScreen(payload));
+                                break;
+                            case 'resetAction':
+                                dispatch(actions.resetAction(payload));
+                                break;
+                            case 'inverseAction':
+                                const operator = ['+', '-', '*', '/', '.'];
+                                if (operator.includes(payload.value) && operator.includes(state.currInput)) return;
+                                dispatch(actions.inverseAction(payload));
+                                break;
+                            default:
+                                console.warn('Unknown action');
                         }
                     };
+                    //Swap button AC to Delete
                     const handleTitle = Array.isArray(btn.titles) ? btn.titles[deleteMode ? 1 : 0] : btn.title;
-                    console.log(handleTitle);
                     const handleValue = Array.isArray(btn.values) ? btn.values[deleteMode ? 1 : 0] : btn.value;
-                    console.log(handleValue);
+                    const handleAction = Array.isArray(btn.actions) ? btn.actions[deleteMode ? 1 : 0] : btn.action;
                     return (
-                        // <Grid container size={12} spacing={1}>
-
                         <Grid key={btn.id} item size={3}>
                             <Button
                                 type="button"
-                                onClick={handleDispatch({ value: handleValue, title: handleTitle })}
+                                onClick={handleDispatch(
+                                    { value: handleValue, title: handleTitle, kind: btn.kind },
+                                    handleAction,
+                                )}
                                 {...dynamicProps}
                             >
                                 {handleTitle}
                             </Button>
                         </Grid>
-
-                        // </Grid>
                     );
                 })}
         </>
