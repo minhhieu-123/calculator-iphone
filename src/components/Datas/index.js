@@ -47,7 +47,7 @@ export const GROUPS_B_BUTTONS = [
         className: 'second',
     },
     { id: 32, kind: 'action', action: 'inverseAction', value: 'inverse', title: '+/-', className: 'second' },
-    { id: 33, kind: 'operator', action: 'setScreen', value: '*0.01', title: '%', className: 'second' },
+    { id: 33, kind: 'operator', action: 'setScreen', value: '%', title: '%', className: 'second' },
     { id: 34, kind: 'operator', action: 'setScreen', value: '/', title: '÷', className: 'primary' },
 
     { id: 35, kind: 'number', action: 'setScreen', value: '7', title: '7', className: 'third' },

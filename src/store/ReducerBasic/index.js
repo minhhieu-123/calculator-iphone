@@ -134,6 +134,7 @@ export function handleInverseAction(state) {
 }
 
 export function handleExportAction(state, action) {
+    const { value } = action.payload;
     const { screenInput } = state;
     // khai báo các hàm toán học
     const operators = {
@@ -161,10 +162,7 @@ export function handleExportAction(state, action) {
         for (let i = 0; i < screenInput.length; i++) {
             let n = screenInput[i];
             let nPrev = screenInput[i - 1];
-            if (
-                screenInput.length &&
-                (n == '-' || (n == '-' && screenInput.at(0) == '-') || (nPrev && nPrev == '(' && n == '-'))
-            ) {
+            if (screenInput.length && ((n == '-' && screenInput.at(0) == '-') || (nPrev && nPrev == '(' && n == '-'))) {
                 numBuffer += n;
                 continue;
             }
@@ -180,16 +178,22 @@ export function handleExportAction(state, action) {
                 newArr.push(n);
                 continue;
             }
-            if (/^[+\-*/^()eE]$/.test(n)) {
+            if (/^[+\-*/^()eE%]$/.test(n)) {
                 if (numBuffer) newArr.push(numBuffer);
                 numBuffer = '';
                 if (n === 'e' || n === 'E') {
                     newArr.push('*');
                 }
-                newArr.push(n);
+                if (n === '%') {
+                    newArr.push('*', '0.01');
+                }
+                if (n !== '%') {
+                    newArr.push(n);
+                }
             }
         }
         if (numBuffer) newArr.push(numBuffer);
+
         return newArr;
     }
 
@@ -276,12 +280,17 @@ export function handleExportAction(state, action) {
 
     // thực thi các bước
     const tokens = mergeTokens(screenInput);
+    console.log(tokens);
     const rpn = infixToRPN(tokens);
+    console.log(rpn);
+
     const result = evaluateRPN(rpn);
+    console.log(result);
 
     return {
         ...state,
+        currInput: value,
         exportInput: [...state.screenInput],
-        screenInput: [String(result)],
+        screenInput: String(result).split(''),
     };
 }

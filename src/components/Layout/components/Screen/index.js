@@ -19,7 +19,7 @@ function Screen() {
                 <div className={'screen'}>
                     <div className="groupValue">
                         <span className="oldValue">
-                            {handleExport(state.exportInput) === '' ? 0 : handleExport(state.exportInput)}
+                            {handleExport(state.exportInput) === '' ? '' : handleExport(state.exportInput)}
                         </span>
                         <span className="newValue">
                             {handleExport(state.screenInput) === '' ? 0 : handleExport(state.screenInput)}

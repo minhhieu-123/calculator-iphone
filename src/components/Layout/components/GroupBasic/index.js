@@ -11,7 +11,9 @@ function GroupBasic() {
     //Handle swap button
     const [deleteMode, setDeleteMode] = useState(false);
     useEffect(() => {
-        if ((currInput !== '' && screenInput.length >= 1) || (currInput === '' && screenInput.length >= 1)) {
+        if (currInput === '=') {
+            setDeleteMode(false);
+        } else if ((currInput !== '' && screenInput.length >= 1) || (currInput === '' && screenInput.length >= 1)) {
             setDeleteMode(true);
         } else {
             setDeleteMode(false);
@@ -52,6 +54,7 @@ function GroupBasic() {
                     const handleTitle = Array.isArray(btn.titles) ? btn.titles[deleteMode ? 1 : 0] : btn.title;
                     const handleValue = Array.isArray(btn.values) ? btn.values[deleteMode ? 1 : 0] : btn.value;
                     const handleAction = Array.isArray(btn.actions) ? btn.actions[deleteMode ? 1 : 0] : btn.action;
+
                     return (
                         <Grid key={btn.id} item size={3}>
                             <Button
