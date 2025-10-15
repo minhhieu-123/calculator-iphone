@@ -5,7 +5,7 @@ const operator = ['+', '*', '/'];
 
 export function handleSetScreen(state, action) {
     const { value, title } = action.payload;
-    const { currInput, prevInput, screenInput, exportInput } = state;
+    const { currInput, prevInput, screenInput } = state;
     const lenArrInput = screenInput.length;
     let numberArr = [];
     let countPeriod = 0;
@@ -30,7 +30,6 @@ export function handleSetScreen(state, action) {
             prevInput: '0',
             currInput: value,
             screenInput: ['0', value],
-            exportInput: ['0', title],
         };
     }
     const last = screenInput.at(-1);
@@ -42,7 +41,6 @@ export function handleSetScreen(state, action) {
                 prevInput: currInput,
                 currInput: value,
                 screenInput: [...screenInput, value],
-                exportInput: [...exportInput, title],
             };
         }
         if (last === '-' && value === '-') {
@@ -54,19 +52,15 @@ export function handleSetScreen(state, action) {
                 prevInput: currInput,
                 currInput: value,
                 screenInput: [...screenInput.slice(0, -2), value],
-                exportInput: [...exportInput.slice(0, -2), title],
             };
         }
         const newScreen = [...screenInput];
         newScreen[newScreen.length - 1] = value;
-        const newExport = [...exportInput];
-        newExport[newExport.length - 1] = title;
         return {
             ...state,
             prevInput: currInput,
             currInput: value,
             screenInput: newScreen,
-            exportInput: newExport,
         };
     }
     return {
@@ -74,25 +68,22 @@ export function handleSetScreen(state, action) {
         prevInput: currInput,
         currInput: value,
         screenInput: [...screenInput, value],
-        exportInput: [...exportInput, title],
     };
 }
 
 export function handleDeleteAction(state, action) {
     const { value } = action.payload;
-    const { currInput, screenInput, exportInput } = state;
+    const { currInput, screenInput } = state;
     const lenArrInput = screenInput.length;
     if (lenArrInput === 2 && screenInput.at(0) === '0' && opFull.includes(screenInput.at(1))) {
         return initState;
     }
     const newScreenInput = screenInput.slice(0, -1);
-    const newExportInput = exportInput.slice(0, -1);
     return {
         ...state,
         prevInput: currInput,
         currInput: value,
         screenInput: newScreenInput,
-        exportInput: newExportInput,
     };
 }
 
@@ -139,5 +130,158 @@ export function handleInverseAction(state) {
     return {
         ...state,
         screenInput: [...arrTheRest, ...temp],
+    };
+}
+
+export function handleExportAction(state, action) {
+    const { screenInput } = state;
+    // khai báo các hàm toán học
+    const operators = {
+        '+': { precedence: 2, associativity: 'L' },
+        '-': { precedence: 2, associativity: 'L' },
+        '*': { precedence: 3, associativity: 'L' },
+        '/': { precedence: 3, associativity: 'L' },
+        '^': { precedence: 4, associativity: 'R' },
+        sin: { precedence: 5, associativity: 'R', func: Math.sin },
+        cos: { precedence: 5, associativity: 'R', func: Math.cos },
+        tan: { precedence: 5, associativity: 'R', func: Math.tan },
+        sqrt: { precedence: 5, associativity: 'R', func: Math.sqrt },
+        log: { precedence: 5, associativity: 'R', func: Math.log10 },
+        abs: { precedence: 5, associativity: 'R', func: Math.abs },
+        ln: { precedence: 5, associativity: 'R', func: Math.log },
+        exp: { precedence: 5, associativity: 'R', func: Math.exp },
+    };
+
+    // merge các phần tử thành mảng token
+    function mergeTokens(screenInput) {
+        let newArr = [];
+        let numBuffer = '';
+        const funcRegex = /^(sin|cos|tan|sqrt|log|abs|ln|exp)$/i;
+        const operatorRegex = /^[+\-*/^()]$/;
+        for (let i = 0; i < screenInput.length; i++) {
+            let n = screenInput[i];
+            let nPrev = screenInput[i - 1];
+            if (
+                screenInput.length &&
+                (n == '-' || (n == '-' && screenInput.at(0) == '-') || (nPrev && nPrev == '(' && n == '-'))
+            ) {
+                numBuffer += n;
+                continue;
+            }
+            if (/[0-9.]/.test(n) && !operatorRegex.test(n)) {
+                numBuffer += n;
+                continue;
+            }
+            if (funcRegex.test(n)) {
+                if (numBuffer) {
+                    newArr.push(numBuffer);
+                    numBuffer = '';
+                }
+                newArr.push(n);
+                continue;
+            }
+            if (/^[+\-*/^()eE]$/.test(n)) {
+                if (numBuffer) newArr.push(numBuffer);
+                numBuffer = '';
+                if (n === 'e' || n === 'E') {
+                    newArr.push('*');
+                }
+                newArr.push(n);
+            }
+        }
+        if (numBuffer) newArr.push(numBuffer);
+        return newArr;
+    }
+
+    // chuyển từ infix sang RPN
+    function infixToRPN(tokens) {
+        let outputQueue = [];
+        let operatorQueue = [];
+        for (let token of tokens) {
+            if (!isNaN(token)) {
+                outputQueue.push(token);
+            } else if (token in operators && !['+', '-', '*', '/', '^'].includes(token)) {
+                operatorQueue.push(token);
+            } else if (token in operators) {
+                while (
+                    operatorQueue.length &&
+                    operatorQueue[operatorQueue.length - 1] in operators &&
+                    ((operators[token].associativity === 'L' &&
+                        operators[token].precedence <= operators[operatorQueue[operatorQueue.length - 1]].precedence) ||
+                        (operators[token].associativity === 'R' &&
+                            operators[token].precedence <
+                                operators[operatorQueue[operatorQueue.length - 1]].precedence))
+                ) {
+                    outputQueue.push(operatorQueue.pop());
+                }
+                operatorQueue.push(token);
+            } else if (token === '(') {
+                operatorQueue.push(token);
+            } else if (token === ')') {
+                while (operatorQueue.length && operatorQueue[operatorQueue.length - 1] !== '(') {
+                    outputQueue.push(operatorQueue.pop());
+                }
+                operatorQueue.pop();
+                if (
+                    operatorQueue.length &&
+                    operatorQueue[operatorQueue.length - 1] in operators &&
+                    !['+', '-', '*', '/', '^'].includes(operatorQueue[operatorQueue.length - 1])
+                ) {
+                    outputQueue.push(operatorQueue.pop());
+                }
+            }
+        }
+        while (operatorQueue.length) {
+            outputQueue.push(operatorQueue.pop());
+        }
+        return outputQueue;
+    }
+
+    // tính toán kết quả từ RPN
+    function evaluateRPN(rpnTokens) {
+        let stack = [];
+        for (let token of rpnTokens) {
+            if (!isNaN(token)) {
+                stack.push(parseFloat(token));
+            } else if (token in operators) {
+                if (['+', '-', '*', '/', '^'].includes(token)) {
+                    const b = stack.pop();
+                    const a = stack.pop();
+                    switch (token) {
+                        case '+':
+                            stack.push(a + b);
+                            break;
+                        case '-':
+                            stack.push(a - b);
+                            break;
+                        case '*':
+                            stack.push(a * b);
+                            break;
+                        case '/':
+                            stack.push(a / b);
+                            break;
+                        case '^':
+                            stack.push(Math.pow(a, b));
+                            break;
+                    }
+                } else {
+                    // hàm toán học
+                    const a = stack.pop();
+                    stack.push(operators[token].func(a));
+                }
+            }
+        }
+        return stack[0];
+    }
+
+    // thực thi các bước
+    const tokens = mergeTokens(screenInput);
+    const rpn = infixToRPN(tokens);
+    const result = evaluateRPN(rpn);
+
+    return {
+        ...state,
+        exportInput: [...state.screenInput],
+        screenInput: [String(result)],
     };
 }

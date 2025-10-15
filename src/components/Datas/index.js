@@ -75,5 +75,5 @@ export const GROUPS_B_BUTTONS = [
     },
     { id: 48, kind: 'number', action: 'setScreen', value: '0', title: '0', className: 'third' },
     { id: 49, kind: 'decimal', action: 'setScreen', value: '.', title: ',', className: 'third' },
-    { id: 50, kind: 'action', action: 'setScreen', value: '=', title: '=', className: 'primary' },
+    { id: 50, kind: 'action', action: 'exportAction', value: '=', title: '=', className: 'primary' },
 ];

@@ -41,6 +41,9 @@ function GroupBasic() {
                                 if (operator.includes(payload.value) && operator.includes(state.currInput)) return;
                                 dispatch(actions.inverseAction(payload));
                                 break;
+                            case 'exportAction':
+                                dispatch(actions.exportAction(payload));
+                                break;
                             default:
                                 console.warn('Unknown action');
                         }

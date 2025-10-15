@@ -1,8 +1,12 @@
-import { INVERSE_ACTION, SET_SCREEN } from './constants';
-import { DELETE_ACTION } from './constants';
-import { RESET_ACTION } from './constants';
+import { EXPORT_ACTION, INVERSE_ACTION, SET_SCREEN, DELETE_ACTION, RESET_ACTION } from './constants';
 
-import { handleSetScreen, handleDeleteAction, handleResetAction, handleInverseAction } from './ReducerBasic';
+import {
+    handleSetScreen,
+    handleDeleteAction,
+    handleResetAction,
+    handleInverseAction,
+    handleExportAction,
+} from './ReducerBasic';
 
 const initState = {
     currInput: '',
@@ -21,6 +25,8 @@ function reducer(state, action) {
             return handleResetAction();
         case INVERSE_ACTION:
             return handleInverseAction(state);
+        case EXPORT_ACTION:
+            return handleExportAction(state, action);
         default:
             throw new Error('Invalid action.');
     }
