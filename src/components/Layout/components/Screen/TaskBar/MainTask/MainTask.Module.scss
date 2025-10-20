@@ -1,0 +1,123 @@
+.GroupDatasContent {
+    margin-top: 10px;
+    padding-left: 20px;
+    flex: 1;
+    overflow-y: auto;
+    height: 90%;
+
+    /* Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.25) transparent;
+
+    /* WebKit (Chrome/Safari/Edge) */
+    &::-webkit-scrollbar {
+        width: 5px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 0, 0.25);
+        border-radius: 999px;
+        background-clip: padding-box;
+        min-height: 20px;
+        opacity: 0;
+        transition: opacity 0.15s ease-in-out, background-color 0.15s ease-in-out;
+    }
+
+    &:hover::-webkit-scrollbar-thumb {
+        opacity: 1;
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    &_Column {
+        padding: 13px 0;
+        border-bottom: 1px solid rgb(172, 169, 169);
+
+        /* Khi column có Date --> sticky */
+        &:has(.GroupDatasContent_Date) {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+            transition: background 0.25s ease-in-out;
+        }
+    }
+
+    &_Date {
+        color: #9b9b9b;
+        font-size: 0.9rem;
+        font-weight: 500;
+        padding: 5px 0;
+        background: transparent;
+        transition: color 0.25s ease-in-out;
+    }
+
+    /* Khi sticky --> đổi màu nhấn hơn */
+    &_Column:has(.GroupDatasContent_Date) .GroupDatasContent_Date {
+        color: #555; // màu khi sticky
+    }
+
+    &_Math {
+        color: #aca9a9;
+        font-size: 0.9rem;
+    }
+
+    &_Result {
+        color: white;
+        padding-top: 5px;
+    }
+}
+
+.NoContentTask {
+    &_Group {
+        display: flex;
+        flex-direction: column;
+        justify-content: center; // căn giữa theo chiều dọc (column)
+        align-items: center; // căn giữa theo chiều ngang
+        height: 100%; // để nó thực sự chiếm full không gian cha
+        width: 100%;
+    }
+
+    &_Icon {
+        filter: brightness(0) saturate(100%) invert(87%) sepia(2%) saturate(69%) hue-rotate(322deg) brightness(89%)
+            contrast(91%);
+        padding-bottom: 10px; // tuỳ chọn khoảng cách với text
+        height: 25px;
+        width: auto;
+    }
+
+    &_Text {
+        font-size: 20px;
+        color: #aca9a9;
+    }
+}
+.GroupTaskFooter {
+    position: absolute;
+    bottom: 0;
+
+    display: flex;
+    height: 60px;
+    width: 100%;
+    background-color: #3d3c41;
+    flex-direction: row;
+    justify-content: space-between;
+    &_GroupButton {
+        padding: 15px 20px 0 20px;
+    }
+    &_Edit {
+        font-size: 0.9rem;
+        font-weight: 300;
+        background-color: transparent;
+        color: var(--color-text-second);
+    }
+    &_ClearAll {
+        font-size: 0.9rem;
+        font-weight: 300;
+        background-color: transparent;
+        color: var(--color-text-three);
+    }
+}

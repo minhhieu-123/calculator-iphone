@@ -1,6 +1,7 @@
 import { CalIcon } from '~/components/Icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDeleteLeft } from '@fortawesome/free-solid-svg-icons';
+
 export const GROUPS_A_BUTTONS = [
     { id: 1, title: '(', className: 'four' },
     { id: 2, title: ')', className: 'four' },
@@ -67,8 +68,8 @@ export const GROUPS_B_BUTTONS = [
 
     {
         id: 47,
-        kind: 'number',
-        action: 'setScreen',
+        kind: 'menu',
+        action: 'setMenu',
         value: null,
         title: <CalIcon className={'CalIcon'} />,
         className: 'third',

@@ -1,5 +1,9 @@
 .iconHeader {
     height: 18px;
     width: 18px;
-    filter: var(--color-icon);
+    filter: brightness(0) saturate(100%) invert(65%) sepia(20%) saturate(4388%) hue-rotate(359deg) brightness(100%)
+        contrast(107%);
+}
+.buttonHeader {
+    background-color: transparent;
 }

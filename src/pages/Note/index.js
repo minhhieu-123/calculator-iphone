@@ -1,5 +1,7 @@
+import Modal from '../../components/Modal';
+
 function Note() {
-    return <h1>Note</h1>;
+    return <Modal small></Modal>;
 }
 
 export default Note;

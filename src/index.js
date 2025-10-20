@@ -4,14 +4,17 @@ import App from '~/App';
 import reportWebVitals from './reportWebVitals';
 import GlobalStyles from '~/components/GlobalStyles';
 import { StoreProvider } from './store';
+import { ModalProvider } from './storeModal';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     // <React.StrictMode>
     <StoreProvider>
-        <GlobalStyles>
-            <App />
-        </GlobalStyles>
+        <ModalProvider>
+            <GlobalStyles>
+                <App />
+            </GlobalStyles>
+        </ModalProvider>
     </StoreProvider>,
     // </React.StrictMode>,
 );

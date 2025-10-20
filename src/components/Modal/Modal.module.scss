@@ -1,0 +1,45 @@
+.modalBasic {
+    // Thuộc tính QUAN TRỌNG để modal nằm gọn trong cha có position: relative
+    position: absolute; // THAY ĐỔI TỪ fixed SANG absolute
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    // Đảm bảo modal LUÔN LUÔN nằm trên mọi thứ trong container đó
+    z-index: 10; // Giảm z-index so với toàn màn hình, nhưng vẫn phải lớn hơn nội dung bên trong box
+
+    background-color: rgba(0, 0, 0, 0.3); // Lớp phủ mờ (Overlay)
+    // display: none; // Mặc định ẩn
+
+    // Nội dung Modal nhỏ (không cần thay đổi nhiều)
+    &_Small {
+        position: absolute;
+
+        // Vị trí này sẽ tính toán từ các cạnh của .parent-container
+        bottom: 24px;
+        left: 24px;
+
+        // Bố cục và màu sắc
+        background-color: var(--color-modal);
+        padding: 10px;
+        border-radius: 20px;
+        width: 210px;
+        height: 180px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+        font-family: 'Helvetica Neue', sans-serif;
+    }
+    &_Medium {
+        position: absolute;
+        // Vị trí này sẽ tính toán từ các cạnh của .parent-container
+        bottom: 0;
+        // Bố cục và màu sắc
+        background-color: var(--color-modal);
+        padding-top: 10px;
+        border-radius: 15px 15px 0 0;
+        width: 100%;
+        height: 60%;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+        font-family: 'Helvetica Neue', sans-serif;
+    }
+}
