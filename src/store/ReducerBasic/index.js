@@ -286,11 +286,12 @@ export function handleExportAction(state, action) {
 
     const result = evaluateRPN(rpn);
     console.log(result);
+    // Save local storage
 
     return {
         ...state,
         currInput: value,
-        exportInput: [...state.screenInput],
+        exportInput: [...screenInput],
         screenInput: String(result).split(''),
     };
 }

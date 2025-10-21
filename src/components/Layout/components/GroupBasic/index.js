@@ -8,11 +8,68 @@ import { GROUPS_B_BUTTONS } from '../../../Datas';
 
 import ModalContainer from '../../../Modal/ModalContainer';
 import { useModal } from '../../../../storeModal';
+import { useLocalStorage } from '../../../../hooks/useLocalStorage';
+import { getDateKey, getTimeString } from '../../../../utils/dateUtils';
 function GroupBasic() {
     // Lấy state và dispatch từ context của calculator
     const [state, dispatch] = useStore();
-    const { currInput, screenInput } = state;
+    const { currInput, screenInput, exportInput } = state;
+    const GLOBAL_KEY = 'Daily_Calculations';
+    const initialLocalValue = {};
+    const [allDailyData, setAllDailyData, updateDailyData] = useLocalStorage(GLOBAL_KEY, initialLocalValue);
 
+    useEffect(() => {
+        // chỉ chạy khi người dùng nhấn "="
+        if (currInput !== '=') return;
+        if (!exportInput || !screenInput) return;
+
+        const nowDay = getDateKey();
+        const newId = getTimeString();
+
+        const newDataEntry = {
+            id: newId,
+            expression: exportInput,
+            result: screenInput,
+        };
+
+        updateDailyData((currentData) => {
+            const todayEntries = currentData[nowDay] || [];
+            return {
+                ...currentData,
+                [nowDay]: [...todayEntries, newDataEntry],
+            };
+        });
+    }, [currInput]); // ✅ CHỈ theo dõi khi currInput đổi (ấn "=")
+    //TEst
+    const TEST_DATE_KEY = '2025-10-15';
+    const addTestDataToPastDay = (updateDailyData) => {
+        // Dữ liệu mẫu (sử dụng ID ngẫu nhiên hoặc timestamp)
+        const testEntry1 = {
+            id: getTimeString() + 'A',
+            expression: ['10', '*', '5'],
+            result: ['5', '0'],
+        };
+        const testEntry2 = {
+            id: getTimeString() + 'B',
+            expression: ['75', '/', '3'],
+            result: ['2', '5'],
+        };
+
+        updateDailyData((currentData) => {
+            // Lấy mảng dữ liệu hiện tại của ngày test (nếu có)
+            const pastEntries = currentData[TEST_DATE_KEY] || [];
+
+            // Ghi đè hoặc thêm vào ngày test đó
+            const updatedPastEntries = [...pastEntries, testEntry1, testEntry2];
+
+            // Trả về object tổng đã được cập nhật
+            return {
+                ...currentData, // Giữ lại tất cả các ngày khác (kể cả ngày hiện tại)
+                [TEST_DATE_KEY]: updatedPastEntries, // Thêm/Ghi đè mảng của ngày 2025-10-15
+            };
+        });
+    };
+    //TEst
     // Lấy trạng thái modal từ context
     const { openModal } = useModal();
 
@@ -49,10 +106,28 @@ function GroupBasic() {
                         e.preventDefault();
                         switch (action) {
                             case 'setMenu':
+                                // Thay 'YOUR_KEY' bằng khóa bạn muốn xem (Ví dụ: 'Daily_Calculations')
+                                const myDataKey = 'Daily_Calculations';
+                                const jsonString = localStorage.getItem(myDataKey);
+
+                                // Kiểm tra xem dữ liệu có tồn tại không
+                                if (jsonString) {
+                                    try {
+                                        // Phân tích chuỗi JSON thành object và in ra
+                                        const dataObject = JSON.parse(jsonString);
+                                        console.log(`Dữ liệu của Key "${myDataKey}":`);
+                                        console.log(dataObject);
+                                    } catch (e) {
+                                        console.error('Lỗi khi phân tích cú pháp JSON:', e);
+                                    }
+                                } else {
+                                    console.log(`Không tìm thấy dữ liệu với Key "${myDataKey}".`);
+                                }
                                 // Đóng/mở modal menu
                                 openAlert();
                                 break;
                             case 'deleteAction':
+                                addTestDataToPastDay(updateDailyData);
                                 // Xóa ký tự
                                 dispatch(actions.deleteAction(payload));
                                 break;
