@@ -40,36 +40,7 @@ function GroupBasic() {
             };
         });
     }, [currInput]); // ✅ CHỈ theo dõi khi currInput đổi (ấn "=")
-    //TEst
-    const TEST_DATE_KEY = '2025-10-15';
-    const addTestDataToPastDay = (updateDailyData) => {
-        // Dữ liệu mẫu (sử dụng ID ngẫu nhiên hoặc timestamp)
-        const testEntry1 = {
-            id: getTimeString() + 'A',
-            expression: ['10', '*', '5'],
-            result: ['5', '0'],
-        };
-        const testEntry2 = {
-            id: getTimeString() + 'B',
-            expression: ['75', '/', '3'],
-            result: ['2', '5'],
-        };
 
-        updateDailyData((currentData) => {
-            // Lấy mảng dữ liệu hiện tại của ngày test (nếu có)
-            const pastEntries = currentData[TEST_DATE_KEY] || [];
-
-            // Ghi đè hoặc thêm vào ngày test đó
-            const updatedPastEntries = [...pastEntries, testEntry1, testEntry2];
-
-            // Trả về object tổng đã được cập nhật
-            return {
-                ...currentData, // Giữ lại tất cả các ngày khác (kể cả ngày hiện tại)
-                [TEST_DATE_KEY]: updatedPastEntries, // Thêm/Ghi đè mảng của ngày 2025-10-15
-            };
-        });
-    };
-    //TEst
     // Lấy trạng thái modal từ context
     const { openModal } = useModal();
 
@@ -127,7 +98,6 @@ function GroupBasic() {
                                 openAlert();
                                 break;
                             case 'deleteAction':
-                                addTestDataToPastDay(updateDailyData);
                                 // Xóa ký tự
                                 dispatch(actions.deleteAction(payload));
                                 break;

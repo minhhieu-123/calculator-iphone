@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 
 export function useLocalStorage(key, initialValue) {
     const [storedValue, setStoredValue] = useState(() => {
@@ -45,13 +45,12 @@ export function useLocalStorage(key, initialValue) {
     );
     const removeData = useCallback(() => {
         try {
-            // Xóa item khỏi Local Storage
             window.localStorage.removeItem(key);
-            // Đặt lại state về giá trị khởi tạo
-            setStoredValue(initialValue);
+            setStoredValue({}); // reference mới -> rerender chắc chắn
         } catch (error) {
             console.error(`Lỗi khi xóa Local Storage key "${key}":`, error);
         }
-    }, [key, initialValue]);
+    }, [key]);
+
     return [storedValue, saveData, updateData, removeData];
 }

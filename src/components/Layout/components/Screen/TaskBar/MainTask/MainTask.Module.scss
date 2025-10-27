@@ -1,10 +1,20 @@
+.is-stuck {
+    background-color: #4443459b;
+
+    /* 3. Áp dụng hiệu ứng làm mờ nền phía sau */
+    /* Giá trị blur thường dùng cho iOS Dark Mode */
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px); /* Hỗ trợ Safari */
+    border: transparent !important;
+
+    /* 2. Độ trong suốt cho nền */
+}
 .GroupDatasContent {
     margin-top: 10px;
-    padding-left: 20px;
     flex: 1;
     overflow-y: auto;
-    height: 90%;
-
+    height: inherit;
+    position: relative;
     /* Firefox */
     scrollbar-width: thin;
     scrollbar-color: rgba(0, 0, 0, 0.25) transparent;
@@ -29,10 +39,11 @@
 
     &:hover::-webkit-scrollbar-thumb {
         opacity: 1;
-        background-color: rgba(0, 0, 0, 0.4);
+        background-color: rgba(165, 165, 165, 0.801);
     }
 
     &_Column {
+        display: flex;
         padding: 13px 0;
         border-bottom: 1px solid rgb(172, 169, 169);
 
@@ -40,33 +51,28 @@
         &:has(.GroupDatasContent_Date) {
             position: sticky;
             top: 0;
-            z-index: 10;
-
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-            transition: background 0.25s ease-in-out;
+            z-index: 2;
         }
     }
 
     &_Date {
-        color: #9b9b9b;
+        // color: #9b9b9b;
+        margin-left: 20px;
+        color: #d0c9c9;
         font-size: 0.9rem;
         font-weight: 500;
         padding: 5px 0;
         background: transparent;
-        transition: color 0.25s ease-in-out;
-    }
-
-    /* Khi sticky --> đổi màu nhấn hơn */
-    &_Column:has(.GroupDatasContent_Date) .GroupDatasContent_Date {
-        color: #555; // màu khi sticky
     }
 
     &_Math {
-        color: #aca9a9;
+        margin-left: 20px;
+        color: #d0c9c9;
         font-size: 0.9rem;
     }
 
     &_Result {
+        margin-left: 20px;
         color: white;
         padding-top: 5px;
     }
@@ -96,9 +102,7 @@
     }
 }
 .GroupTaskFooter {
-    position: absolute;
-    bottom: 0;
-
+    overflow: hidden;
     display: flex;
     height: 60px;
     width: 100%;
@@ -109,15 +113,115 @@
         padding: 15px 20px 0 20px;
     }
     &_Edit {
+        cursor: pointer;
         font-size: 0.9rem;
         font-weight: 300;
         background-color: transparent;
         color: var(--color-text-second);
     }
     &_ClearAll {
+        cursor: pointer;
         font-size: 0.9rem;
         font-weight: 300;
         background-color: transparent;
         color: var(--color-text-three);
     }
+}
+/* Biến SCSS (tùy chọn, để dễ tùy chỉnh) */
+/* Biến SCSS */
+/* --- KEYFRAMES ĐỊNH NGHĨA HIỆU ỨNG TRƯỢT --- */
+/* --- KEYFRAMES 1: XUẤT HIỆN (Trượt từ Trái sang Phải) --- */
+@keyframes slideInFromLeft {
+    0% {
+        transform: translateX(-100%); /* Bắt đầu ngoài cùng bên trái */
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(50%); /* Kết thúc tại vị trí mặc định */
+        opacity: 1;
+    }
+}
+
+/* --- KEYFRAMES 2: BIẾN MẤT (Trượt từ Trái sang Phải) --- */
+@keyframes slideOutToRight {
+    0% {
+        transform: translateX(-50%); /* Bắt đầu tại vị trí mặc định */
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(100%); /* Kết thúc ngoài cùng bên phải */
+        opacity: 0;
+    }
+}
+
+.GroupDatasContent_Checkbox {
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+
+    /* Áp dụng hiệu ứng XUẤT HIỆN mặc định khi render */
+    animation: slideInFromLeft 0.2s ease-out forwards;
+}
+
+/* Thêm Class cho Hiệu ứng BIẾN MẤT */
+.GroupDatasContent_Checkbox.is-exiting {
+    /* Khi class này được thêm vào, hiệu ứng trượt ngược sẽ chạy */
+    animation: slideOutToRight 0.4s ease-in forwards;
+}
+
+/* (Giữ nguyên SCSS cho Checkbox UI bên dưới) */
+$size: 15px;
+$checked-color: #2196f3;
+
+.GroupDatasContent_Checkbox input[type='checkbox'] {
+    opacity: 0;
+    position: absolute;
+    width: size;
+    height: size;
+    z-index: 1;
+    cursor: pointer;
+}
+
+.GroupDatasContent_Checkbox .custom-checkbox {
+    display: block;
+    width: $size;
+    height: $size;
+    border: 2px solid #ccc;
+    border-radius: 50%;
+    position: relative;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.GroupDatasContent_Checkbox .custom-checkbox::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: translate(-50%, -50%) rotate(45deg);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.GroupDatasContent_Checkbox input[type='checkbox']:checked + .custom-checkbox {
+    background-color: $checked-color;
+    border-color: $checked-color;
+}
+
+.GroupDatasContent_Checkbox input[type='checkbox']:checked + .custom-checkbox::after {
+    opacity: 1;
+}
+.GroupTaskFooter_ClearAll_Disable {
+    background-color: transparent; /* xám nhạt */
+    color: #6e6e6e; /* xám chữ */
+    cursor: not-allowed; /* hiện icon cấm click */
+    pointer-events: none; /* chặn toàn bộ click/hover */
+    opacity: 0.7; /* hơi mờ nhẹ */
+    border: none;
+    font-size: 0.9rem;
 }

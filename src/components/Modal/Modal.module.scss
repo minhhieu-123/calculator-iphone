@@ -30,8 +30,11 @@
         font-family: 'Helvetica Neue', sans-serif;
     }
     &_Medium {
+        display: flex;
+        flex-direction: column;
         position: absolute;
         // Vị trí này sẽ tính toán từ các cạnh của .parent-container
+        overflow: hidden;
         bottom: 0;
         // Bố cục và màu sắc
         background-color: var(--color-modal);
